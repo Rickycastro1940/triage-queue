@@ -1,80 +1,57 @@
-"""Array-backed max-heap priority queue (1-based indexing)."""
+"""Priority queue backed by ``heapq`` (stdlib binary heap)."""
 from __future__ import annotations
 
-from typing import Generic, Iterable, List, Optional, TypeVar
+import heapq
+from typing import Generic, List, Tuple, TypeVar
+
+from .models import Patient
 
 T = TypeVar("T")
 
+# Heap entry: (triage_level, arrived_at, sequence, patient)
+# heapq is a min-heap, so smaller triage_level (more urgent) rises first;
+# earlier arrived_at breaks ties; sequence makes equal timestamps stable/unique.
+_HeapEntry = Tuple[int, object, int, Patient]
 
-class PriorityQueue(Generic[T]):
-    """Max-oriented binary heap.
 
-    Index 0 is unused so parent/child math stays simple:
-    - parent(i) = i // 2
-    - left(i) = 2 * i
-    - right(i) = 2 * i + 1
+class PriorityQueue:
+    """Min-heap over urgency keys using ``heapq``.
+
+    Why ``heapq`` (see DESIGN.md): O(log n) enqueue/dequeue while preserving
+    triage level + arrival order, without maintaining a fully sorted list.
     """
 
-    def __init__(self, items: Optional[Iterable[T]] = None) -> None:
-        self._heap: List[Optional[T]] = [None]
-        if items:
-            for item in items:
-                self.enqueue(item)
+    def __init__(self) -> None:
+        self._heap: List[_HeapEntry] = []
+        self._seq = 0
 
     def __len__(self) -> int:
-        return len(self._heap) - 1
+        return len(self._heap)
 
     @property
     def is_empty(self) -> bool:
-        return len(self) == 0
+        return not self._heap
 
-    def enqueue(self, item: T) -> None:
-        self._heap.append(item)
-        self._swim(len(self))
+    def enqueue(self, patient: Patient) -> None:
+        entry: _HeapEntry = (
+            patient.triage_level,
+            patient.arrived_at,
+            self._seq,
+            patient,
+        )
+        self._seq += 1
+        heapq.heappush(self._heap, entry)
 
-    def peek(self) -> T:
+    def peek(self) -> Patient:
         if self.is_empty:
             raise IndexError("peek from empty priority queue")
-        return self._heap[1]  # type: ignore[return-value]
+        return self._heap[0][3]
 
-    def dequeue(self) -> T:
+    def dequeue(self) -> Patient:
         if self.is_empty:
             raise IndexError("dequeue from empty priority queue")
-        top = self._heap[1]
-        last = self._heap.pop()
-        if not self.is_empty:
-            self._heap[1] = last
-            self._sink(1)
-        return top  # type: ignore[return-value]
+        return heapq.heappop(self._heap)[3]
 
-    def items(self) -> List[T]:
-        """Return a shallow copy of heap items (unordered)."""
-        return [item for item in self._heap[1:] if item is not None]
-
-    def _swim(self, i: int) -> None:
-        while i > 1:
-            parent = i // 2
-            if not self._less(parent, i):
-                break
-            self._exch(parent, i)
-            i = parent
-
-    def _sink(self, i: int) -> None:
-        n = len(self)
-        while 2 * i <= n:
-            j = 2 * i
-            if j < n and self._less(j, j + 1):
-                j += 1
-            if not self._less(i, j):
-                break
-            self._exch(i, j)
-            i = j
-
-    def _less(self, i: int, j: int) -> bool:
-        """True if heap[i] has lower urgency than heap[j] (max-heap)."""
-        a = self._heap[i]
-        b = self._heap[j]
-        return a < b  # type: ignore[operator]
-
-    def _exch(self, i: int, j: int) -> None:
-        self._heap[i], self._heap[j] = self._heap[j], self._heap[i]
+    def items(self) -> List[Patient]:
+        """Return waiting patients (heap order, not attention order)."""
+        return [entry[3] for entry in self._heap]

@@ -34,14 +34,13 @@ Equal triage levels break ties by **earlier** `arrived_at`.
 
 ```bash
 cd triage-queue
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
+# No third-party packages required (stdlib only: heapq, datetime, threading)
 
 # Interactive menu: add / call next / view queue / stats / exit
-PYTHONPATH=src python -m triage_queue.cli
+PYTHONPATH=src python3 -m triage_queue.cli
 
-PYTHONPATH=src pytest -q
+# Tests (stdlib unittest)
+PYTHONPATH=src python3 -m unittest discover -s tests -v
 ```
 
 ### CLI menu
@@ -50,6 +49,8 @@ PYTHONPATH=src pytest -q
 3. View the current queue
 4. See queue stats
 5. Exit
+
+Design notes: see [`DESIGN.md`](./DESIGN.md).
 
 ## Layout
 
