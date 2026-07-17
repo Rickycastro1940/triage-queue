@@ -24,6 +24,12 @@ Manages priority-queue logic internally (max-heap). Core operations:
 
 Equal triage levels break ties by **earlier** `arrived_at`.
 
+## Correctness and edge cases
+
+- A new **level-1** patient jumps ahead of waiting level-2/3 patients.
+- Same triage level → **strict FIFO** by `arrived_at`.
+- `dequeue()` / `peek()` on an empty queue raise `EmptyTriageQueueError` (CLI prints the message and continues).
+
 ## Quick start
 
 ```bash
