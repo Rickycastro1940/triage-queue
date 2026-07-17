@@ -2,6 +2,6 @@
 
 from .models import Patient
 from .priority_queue import PriorityQueue
-from .triage_queue import TriageQueue
+from .triage_queue import EmptyTriageQueueError, TriageQueue
 
-__all__ = ["Patient", "TriageQueue", "PriorityQueue"]
+__all__ = ["Patient", "TriageQueue", "PriorityQueue", "EmptyTriageQueueError"]

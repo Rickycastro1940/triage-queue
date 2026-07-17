@@ -47,6 +47,10 @@ class PriorityQueue(Generic[T]):
             self._sink(1)
         return top  # type: ignore[return-value]
 
+    def items(self) -> List[T]:
+        """Return a shallow copy of heap items (unordered)."""
+        return [item for item in self._heap[1:] if item is not None]
+
     def _swim(self, i: int) -> None:
         while i > 1:
             parent = i // 2

@@ -12,14 +12,15 @@ A priority-queue manager for ER-style triage: **level 1** patients are called be
 | `arrived_at` | `datetime` | Arrival timestamp (UTC default) |
 
 ### `TriageQueue`
-Manages priority-queue logic internally (max-heap). Public operations:
+Manages priority-queue logic internally (max-heap). Core operations:
 
 | Method | Description |
 | --- | --- |
-| `arrive(patient)` | Enqueue a `Patient` |
-| `peek_next()` | Look at next patient |
-| `call_next()` | Dequeue highest-urgency patient |
-| `add(name, triage_level, …)` | Convenience constructor + enqueue |
+| `enqueue(patient)` | Add a patient (respects level + arrival order) |
+| `dequeue()` | Remove/return next patient; raises if empty |
+| `peek()` | Next patient without removing; raises if empty |
+| `list_queue()` | All waiting patients in attention order |
+| `stats()` | `{1: n, 2: n, 3: n}` waiting counts per level |
 
 Equal triage levels break ties by **earlier** `arrived_at`.
 

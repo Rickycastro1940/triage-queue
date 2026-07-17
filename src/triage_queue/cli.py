@@ -26,18 +26,19 @@ def main() -> int:
     ]
 
     print("Triage Queue — Priority Queue Manager\n")
-    print("Patients arriving:")
+    print("enqueue:")
     for patient in samples:
-        queue.arrive(patient)
-        print(
-            f"  + L{patient.triage_level} {patient.name} "
-            f"(arrived {patient.arrived_at.strftime('%H:%M:%S')})"
-        )
+        queue.enqueue(patient)
+        print(f"  + L{patient.triage_level} {patient.name}")
 
-    print("\nCalling patients (1 = most urgent):")
+    print("\nstats():", queue.stats())
+    print("list_queue():", [f"L{p.triage_level}:{p.name}" for p in queue.list_queue()])
+    print("peek():", queue.peek().name)
+
+    print("\ndequeue (attention order):")
     while not queue.is_empty:
-        patient = queue.call_next()
-        print(f"  → call L{patient.triage_level} {patient.name}")
+        patient = queue.dequeue()
+        print(f"  → L{patient.triage_level} {patient.name}")
     return 0
 
 
