@@ -1,7 +1,7 @@
-"""Package exports for Triage Queue."""
+"""Package exports for Triage Queue — Priority Queue Manager."""
 
-from .manager import TriageQueueManager
-from .models import TriageItem
+from .models import Patient
 from .priority_queue import PriorityQueue
+from .triage_queue import TriageQueue
 
-__all__ = ["TriageItem", "PriorityQueue", "TriageQueueManager"]
+__all__ = ["Patient", "TriageQueue", "PriorityQueue"]

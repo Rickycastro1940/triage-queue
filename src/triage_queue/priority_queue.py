@@ -67,12 +67,9 @@ class PriorityQueue(Generic[T]):
             i = j
 
     def _less(self, i: int, j: int) -> bool:
-        """True if heap[i] has lower priority than heap[j] (max-heap)."""
+        """True if heap[i] has lower urgency than heap[j] (max-heap)."""
         a = self._heap[i]
         b = self._heap[j]
-        # For TriageItem: higher priority wins; for equal priority, earlier created_at
-        # sorts smaller under dataclass order=True when we invert via max-heap logic.
-        # We compare using >= on the natural order so larger priority rises.
         return a < b  # type: ignore[operator]
 
     def _exch(self, i: int, j: int) -> None:
