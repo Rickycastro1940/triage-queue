@@ -32,9 +32,18 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 
+# Interactive menu: add / call next / view queue / stats / exit
 PYTHONPATH=src python -m triage_queue.cli
+
 PYTHONPATH=src pytest -q
 ```
+
+### CLI menu
+1. Add a new patient (name + triage level)
+2. Call the next patient
+3. View the current queue
+4. See queue stats
+5. Exit
 
 ## Layout
 
